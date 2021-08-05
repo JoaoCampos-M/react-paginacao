@@ -1,6 +1,32 @@
 import React from 'react'
 import './style.css'
 function Home() {
+  function List() {
+    /**  
+     * Populando a lista com array método 1
+    const data = []
+    for (let c = 0; c < 100; c++) {
+      data.push(`<div className="item" > Item ${index + 1}</div>`)
+    }
+
+    */
+
+    const data = Array.from({ length: 100 }).map((_, index) => {
+      return `Item ${index + 1}`
+    })
+    return (
+      <div>
+        {data.map((e, i) => {
+          return (
+            <div key={i} className="item">
+              {e}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <div className="container">
       <header>
@@ -8,11 +34,7 @@ function Home() {
       </header>
 
       <div id="paginate">
-        <div className="list">
-          <div className="item"> item 1</div>
-          <div className="item"> item 2</div>
-          <div className="item"> item 3</div>
-        </div>
+        <List></List>
         <div className="controls">
           <div className="first">&#171;</div>
           <div className="prev"></div>
