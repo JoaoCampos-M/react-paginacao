@@ -15,7 +15,7 @@ function Home() {
   const [page, setPage] = useState(1)
 
   const [atualPage, setAtualPage] = useState([])
-
+  const maxVisibleButtons = 5
   const totalPage = Math.ceil(data.length / perPage)
   function List() {
     return (
@@ -43,6 +43,7 @@ function Home() {
     }
   }
   function goTo(pg) {
+    pg = parseInt(pg)
     if (pg < 1) {
       pg = 1
     }
@@ -60,8 +61,59 @@ function Home() {
   }
   useEffect(() => {
     updatePg()
+    updateButtons()
   }, [page])
 
+  // const [maxR, setMaxR] = useState(1)
+  // const [maxL, setMaxL] = useState(1)
+  function calculatemaxVisible() {
+    let maxL = page - Math.floor(maxVisibleButtons / 2)
+    let maxR = page + Math.floor(maxVisibleButtons / 2)
+    if (maxL < 1) {
+      maxL = 1
+      maxR = maxVisibleButtons
+    }
+
+    if (maxR > totalPage) {
+      maxL = totalPage - (maxVisibleButtons - 1)
+      maxR = totalPage
+      if (maxL < 1) {
+        maxL = 1
+      }
+    }
+    return { maxL, maxR }
+  }
+  const [paginateButtons, setPaginateButtons] = useState([])
+
+  function PaginationNumbers() {
+    return (
+      <div className="numbers">
+        {paginateButtons.map((item, index) => {
+          return (
+            <div
+              onClick={() => {
+                goTo(item)
+              }}
+              key={index}
+              className={item === page ? 'page-active' : ''}
+            >
+              {item}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+  function updateButtons() {
+    const { maxL, maxR } = calculatemaxVisible()
+    console.log(maxL)
+    console.log(maxR)
+    const aux = []
+    for (let c = maxL; c <= maxR; c++) {
+      aux.push(c)
+    }
+    setPaginateButtons(aux)
+  }
   return (
     <div className="container">
       <header>
@@ -87,9 +139,10 @@ function Home() {
           >
             prev
           </div>
-          <div className="numbers">
+          {/* <div className="numbers">
             <div>1</div>
-          </div>
+          </div> */}
+          <PaginationNumbers></PaginationNumbers>
           <div
             className="next"
             onClick={() => {
