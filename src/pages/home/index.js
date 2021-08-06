@@ -1,6 +1,18 @@
 import React from 'react'
 import './style.css'
 function Home() {
+  const data = Array.from({ length: 100 }).map((_, index) => {
+    return `Item ${index + 1}`
+  })
+
+  /** =========================================================== */
+  const perPage = 5
+  const state = {
+    page: 1,
+    perPage,
+    totalPage: Math.ceil(data.length / perPage)
+  }
+
   function List() {
     /**  
      * Populando a lista com array método 1
@@ -11,9 +23,6 @@ function Home() {
 
     */
 
-    const data = Array.from({ length: 100 }).map((_, index) => {
-      return `Item ${index + 1}`
-    })
     return (
       <div>
         {data.map((e, i) => {
@@ -27,6 +36,38 @@ function Home() {
     )
   }
 
+  function prev() {
+    state.page++
+    const lastPage = state.page > state.totalPage
+    if (lastPage) {
+      state.page--
+    }
+    updatePg()
+  }
+  function next() {
+    state.page--
+    if (state.page < 1) {
+      state.page++
+    }
+    updatePg()
+  }
+  function goTo(page) {
+    if (page < 1) {
+      page = 1
+    }
+
+    state.page = page
+    if (page > state.totalPage) {
+      state.page = state.totalPage
+    }
+    updatePg()
+  }
+  function updatePg() {
+    console.log(state.page)
+  }
+
+  console.log(state.totalPage)
+
   return (
     <div className="container">
       <header>
@@ -36,13 +77,41 @@ function Home() {
       <div id="paginate">
         <List></List>
         <div className="controls">
-          <div className="first">&#171;</div>
-          <div className="prev"></div>
+          <div
+            className="first"
+            onClick={() => {
+              goTo(1)
+            }}
+          >
+            &#171;
+          </div>
+          <div
+            className="prev"
+            onClick={() => {
+              prev()
+            }}
+          >
+            prev
+          </div>
           <div className="numbers">
             <div>1</div>
           </div>
-          <div className="next"></div>
-          <div className="last">&#187;</div>
+          <div
+            className="next"
+            onClick={() => {
+              next()
+            }}
+          >
+            next
+          </div>
+          <div
+            className="last"
+            onClick={() => {
+              goTo(state.totalPage)
+            }}
+          >
+            &#187;
+          </div>
         </div>
       </div>
     </div>
