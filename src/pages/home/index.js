@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './style.css'
 function Home() {
   const data = Array.from({ length: 100 }).map((_, index) => {
@@ -7,25 +7,20 @@ function Home() {
 
   /** =========================================================== */
   const perPage = 5
-  const state = {
-    page: 1,
-    perPage,
-    totalPage: Math.ceil(data.length / perPage)
-  }
+  // const state = {
+  //   page: 1,
+  //   perPage,
+  //   totalPage: Math.ceil(data.length / perPage)
+  // }
+  const [page, setPage] = useState(1)
 
+  const [atualPage, setAtualPage] = useState([])
+
+  const totalPage = Math.ceil(data.length / perPage)
   function List() {
-    /**  
-     * Populando a lista com array método 1
-    const data = []
-    for (let c = 0; c < 100; c++) {
-      data.push(`<div className="item" > Item ${index + 1}</div>`)
-    }
-
-    */
-
     return (
       <div>
-        {data.map((e, i) => {
+        {atualPage.map((e, i) => {
           return (
             <div key={i} className="item">
               {e}
@@ -36,37 +31,36 @@ function Home() {
     )
   }
 
-  function prev() {
-    state.page++
-    const lastPage = state.page > state.totalPage
-    if (lastPage) {
-      state.page--
-    }
-    updatePg()
-  }
   function next() {
-    state.page--
-    if (state.page < 1) {
-      state.page++
+    const lastPage = !(page < totalPage)
+    if (!lastPage) {
+      setPage(page + 1)
     }
-    updatePg()
   }
-  function goTo(page) {
-    if (page < 1) {
-      page = 1
+  function prev() {
+    if (page > 1) {
+      setPage(page - 1)
+    }
+  }
+  function goTo(pg) {
+    if (pg < 1) {
+      pg = 1
     }
 
-    state.page = page
-    if (page > state.totalPage) {
-      state.page = state.totalPage
+    setPage(pg)
+    if (pg > totalPage) {
+      setPage(totalPage)
     }
-    updatePg()
   }
   function updatePg() {
-    console.log(state.page)
+    const start = (page - 1) * perPage
+    const end = start + perPage
+    setAtualPage(data.slice(start, end))
+    console.log(atualPage)
   }
-
-  console.log(state.totalPage)
+  useEffect(() => {
+    updatePg()
+  }, [page])
 
   return (
     <div className="container">
@@ -107,7 +101,7 @@ function Home() {
           <div
             className="last"
             onClick={() => {
-              goTo(state.totalPage)
+              goTo(totalPage)
             }}
           >
             &#187;
